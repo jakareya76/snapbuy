@@ -92,12 +92,6 @@
   }
 }
 
-/* @layer base {
-  body {
-    @apply bg-background text-foreground;
-  }
-} */
-
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
@@ -212,7 +206,4 @@
   * {
     @apply border-border outline-ring/50;
   }
-  /* body {
-    @apply bg-background text-foreground;
-  } */
 }
