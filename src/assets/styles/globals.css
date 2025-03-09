@@ -1,3 +1,4 @@
+@import "tailwindcss";
 /* @tailwind base;
 @tailwind components;
 @tailwind utilities; */
@@ -5,8 +6,6 @@
 @plugin "tailwindcss-animate";
 
 @custom-variant dark (&:is(.dark *));
-
-@import "tailwindcss";
 
 @utility wrapper {
   @apply max-w-7xl lg:mx-auto p-5 md:px-10 w-full;
