@@ -7,7 +7,11 @@ import { getProductBySlug } from "@/lib/actions/product.actions";
 import { notFound } from "next/navigation";
 import ProductImages from "@/components/shared/product/product-images";
 
-const ProductDetailsPage = async ({ params }: { params: { slug: string } }) => {
+const ProductDetailsPage = async ({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) => {
   const { slug } = await params;
 
   const product = await getProductBySlug(slug);
