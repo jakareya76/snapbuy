@@ -19,14 +19,16 @@ const AddToCart = ({ item }: { item: CartItem }) => {
           onClick: () => console.log("Undo"),
         },
       });
-    } else {
-      toast(res.message, {
-        action: {
-          label: <Plus />,
-          onClick: () => console.log("Undo"),
-        },
-      });
+
+      return;
     }
+
+    toast(res.message, {
+      action: {
+        label: "Go To Cart",
+        onClick: () => router.push("/cart"),
+      },
+    });
   };
 
   return (
@@ -35,7 +37,7 @@ const AddToCart = ({ item }: { item: CartItem }) => {
       type="button"
       onClick={handleAddToCart}
     >
-      Add To Cart
+      <Plus /> Add To Cart
     </Button>
   );
 };
