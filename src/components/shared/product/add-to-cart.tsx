@@ -17,12 +17,7 @@ const AddToCart = ({ cart, item }: { cart?: Cart; item: CartItem }) => {
       const res = await addItemToCart(item);
 
       if (!res.success) {
-        toast(res.message, {
-          action: {
-            label: "x",
-            onClick: () => console.log("Undo"),
-          },
-        });
+        toast(res.message);
 
         return;
       }
