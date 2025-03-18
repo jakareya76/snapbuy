@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import Pagination from "@/components/shared/pagination";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "My Orders",
 };
 
