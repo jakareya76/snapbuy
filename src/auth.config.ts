@@ -19,8 +19,16 @@ export const authConfig = {
 
       // Get pathname from the req URL object
       const { pathname } = request.nextUrl;
-      // Check if user is not authenticated and accessing a protected path
-      if (!auth && protectedPaths.some((p) => p.test(pathname))) return false;
+
+      // If user is unauthenticated and trying to access a protected page, redirect them
+      if (!auth && protectedPaths.some((p) => p.test(pathname))) {
+        return NextResponse.redirect(
+          new URL(
+            `/sign-in?callbackUrl=${encodeURIComponent(request.nextUrl)}`,
+            request.nextUrl
+          )
+        );
+      }
 
       // Check for session cart cookie
       if (!request.cookies.get("sessionCartId")) {

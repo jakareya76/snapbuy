@@ -8,11 +8,6 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export const config = {
-  pages: {
-    signIn: "/sign-in",
-    error: "/sign-in",
-  },
-
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -157,6 +152,10 @@ export const config = {
         return true;
       }
     },
+  },
+  pages: {
+    signIn: "/sign-in",
+    error: "/sign-in",
   },
 } satisfies NextAuthConfig;
 
