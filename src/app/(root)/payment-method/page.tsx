@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { getUserById } from "@/lib/actions/user.actions";
 import PaymentMethodForm from "./payment-method-form";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Select Payment Method",
 };
 

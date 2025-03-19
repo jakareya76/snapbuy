@@ -8,6 +8,10 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export const config = {
+  pages: {
+    signIn: "/sign-in",
+    error: "/sign-in",
+  },
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -58,9 +62,9 @@ export const config = {
       // set the user id form the token
       session.user.id = token.sub;
       session.user.role = token.role;
-      session.user.name = token.name;
+      session.user.name = token.name; // Update with token name after sign-in or update
 
-      // if there is an update, set the user name
+      // If there is an update, set the user name
       if (trigger === "update") {
         session.user.name = user.name;
       }
@@ -69,23 +73,24 @@ export const config = {
     },
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async jwt({ token, user, trigger }: any) {
-      // Assign user fields to token
+    async jwt({ token, user, trigger, session }: any) {
+      // If there is no user object (e.g., during session verification), skip the logic
       if (user) {
         token.id = user.id;
         token.role = user.role;
 
-        // if user has no name then use email
+        // if user has no name, use email as a fallback
         if (user.name === "NO_NAME") {
           token.name = user.email!.split("@")[0];
 
-          // Update database to reflect the token name
+          // Update the user's name in the database
           await prisma.user.update({
             where: { id: user.id },
             data: { name: token.name },
           });
         }
 
+        // Handle cart association during sign-in or sign-up
         if (trigger === "signIn" || trigger === "signUp") {
           const cookiesObject = await cookies();
           const sessionCartId = cookiesObject.get("sessionCartId")?.value;
@@ -96,12 +101,12 @@ export const config = {
             });
 
             if (sessionCart) {
-              // delete current user cart
+              // Delete the current user's cart and assign the session cart
               await prisma.cart.deleteMany({
                 where: { userId: user.id },
               });
 
-              // assign new cart
+              // Update cart with new user ID
               await prisma.cart.update({
                 where: { id: sessionCart.id },
                 data: { userId: user.id },
@@ -109,6 +114,11 @@ export const config = {
             }
           }
         }
+      }
+
+      // Handle session updates
+      if (session?.user.name && trigger === "update") {
+        token.name = session.user.name;
       }
 
       return token;
@@ -152,10 +162,6 @@ export const config = {
         return true;
       }
     },
-  },
-  pages: {
-    signIn: "/sign-in",
-    error: "/sign-in",
   },
 } satisfies NextAuthConfig;
 

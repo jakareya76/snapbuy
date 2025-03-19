@@ -10,7 +10,7 @@ import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 
 // Calculate cart price
-const calcPrice = (items: CartItem) => {
+const calcPrice = (items: CartItem[]) => {
   const itemsPrice = round2(
       items.reduce((acc, item) => acc + Number(item.price) * item.qty, 0)
     ),
@@ -119,7 +119,7 @@ export async function addItemToCart(data: CartItem) {
   }
 }
 
-export async function getMyCart(data?: CartItem) {
+export async function getMyCart() {
   const sessionCartId = (await cookies()).get("sessionCartId")?.value;
   if (!sessionCartId) throw new Error("Cart session not found");
 
