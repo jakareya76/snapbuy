@@ -40,8 +40,6 @@ const ProfileForm = () => {
       },
     };
 
-    console.log(newSession);
-
     await update(newSession);
 
     toast.success("User Updated");
