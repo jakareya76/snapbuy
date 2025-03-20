@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Product } from "../../../types";
-import { ControllerRenderProps, useForm } from "react-hook-form";
+import { ControllerRenderProps, SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { insertProductSchema, updateProductSchema } from "@/lib/validators";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +20,11 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import slugify from "slugify";
+import { createProduct, updateProduct } from "@/lib/actions/product.actions";
+import { UploadButton } from "@/lib/uploadthing";
+import { Card, CardContent } from "../ui/card";
+import Image from "next/image";
+import "@uploadthing/react/styles.css";
 
 const ProductForm = ({
   type,
@@ -32,19 +37,59 @@ const ProductForm = ({
 }) => {
   const router = useRouter();
 
+  const schema = type === "Update" ? updateProductSchema : insertProductSchema;
+
   const form = useForm<z.infer<typeof insertProductSchema>>({
-    resolver:
-      type === "Update"
-        ? zodResolver(updateProductSchema)
-        : zodResolver(insertProductSchema),
+    resolver: zodResolver(schema),
     defaultValues:
       product && type === "Update" ? product : productDefaultValues,
   });
 
+  const onSubmit: SubmitHandler<z.infer<typeof insertProductSchema>> = async (
+    values
+  ) => {
+    // Create Product
+    if (type === "Create") {
+      const res = await createProduct(values);
+
+      if (!res.success) {
+        toast.error(res.message);
+      } else {
+        toast.success(res.message);
+      }
+
+      router.push("/admin/products");
+    }
+
+    // Update Product
+    if (type === "Update") {
+      if (!productId) {
+        router.push("/admin/products");
+        return;
+      }
+
+      const res = await updateProduct({ ...values, id: productId });
+
+      if (!res.success) {
+        toast.error(res.message);
+      } else {
+        toast.success(res.message);
+      }
+
+      router.push("/admin/products");
+    }
+  };
+
+  const images = form.watch("images");
+
   return (
     <Form {...form}>
-      <form className="space-y-8">
-        <div className="flex flex-col h-16 md:flex-row gap-5">
+      <form
+        method="POST"
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-8"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 h-24">
           {/* Name */}
           <FormField
             control={form.control}
@@ -67,42 +112,44 @@ const ProductForm = ({
             )}
           />
           {/* slug */}
-          <FormField
-            control={form.control}
-            name="slug"
-            render={({
-              field,
-            }: {
-              field: ControllerRenderProps<
-                z.infer<typeof insertProductSchema>,
-                "slug"
-              >;
-            }) => (
-              <FormItem className="w-full">
-                <FormLabel>Slug</FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <Input placeholder="Enter slug" {...field} />
-                    <Button
-                      type="button"
-                      className="bg-gray-800 hover:bg-gray-900 cursor-pointer text-white px-4 py-1 mt-2"
-                      onClick={() => {
-                        form.setValue(
-                          "slug",
-                          slugify(form.getValues("name"), { lower: true })
-                        );
-                      }}
-                    >
-                      Generate
-                    </Button>
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="md:mt-10">
+            <FormField
+              control={form.control}
+              name="slug"
+              render={({
+                field,
+              }: {
+                field: ControllerRenderProps<
+                  z.infer<typeof insertProductSchema>,
+                  "slug"
+                >;
+              }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Slug</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input placeholder="Enter slug" {...field} />
+                      <Button
+                        type="button"
+                        className="bg-gray-800 hover:bg-gray-900 cursor-pointer text-white px-4 py-1 mt-2"
+                        onClick={() => {
+                          form.setValue(
+                            "slug",
+                            slugify(form.getValues("name"), { lower: true })
+                          );
+                        }}
+                      >
+                        Generate
+                      </Button>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
-        <div className="flex flex-col md:flex-row gap-5 mt-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-28 md:mt-20">
           {/* category */}
           <FormField
             control={form.control}
@@ -146,7 +193,7 @@ const ProductForm = ({
             )}
           />
         </div>
-        <div className="flex flex-col md:flex-row gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
           {/* price */}
           <FormField
             control={form.control}
@@ -192,6 +239,43 @@ const ProductForm = ({
         </div>
         <div className="upload-field flex flex-col md:flex-row gap-5">
           {/* images */}
+          <FormField
+            control={form.control}
+            name="images"
+            render={() => (
+              <FormItem className="w-full">
+                <FormLabel>Images</FormLabel>
+                <Card>
+                  <CardContent className="space-y-2 mt-2 min-h-48">
+                    <div className="flex-start space-x-2">
+                      {images.map((image: string) => (
+                        <Image
+                          key={image}
+                          src={image}
+                          alt="product image"
+                          className="w-20 h-20 object-cover object-center rounded-sm"
+                          width={100}
+                          height={100}
+                        />
+                      ))}
+                      <FormControl>
+                        <UploadButton
+                          endpoint="imageUploader"
+                          onClientUploadComplete={(res: { url: string }[]) => {
+                            form.setValue("images", [...images, res[0].url]);
+                          }}
+                          onUploadError={(error: Error) => {
+                            toast(error.message);
+                          }}
+                        />
+                      </FormControl>
+                    </div>
+                  </CardContent>
+                </Card>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
         <div className="upload-field">{/* isFeatured */}</div>
         <div>

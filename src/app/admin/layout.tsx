@@ -5,6 +5,10 @@ import Menu from "@/components/shared/header/menu";
 import MainNav from "./main-nav";
 import { Input } from "@/components/ui/input";
 
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
+import { ourFileRouter } from "@/app/api/uploadthing/core";
+
 export default function AdminLayout({
   children,
 }: Readonly<{
@@ -12,6 +16,7 @@ export default function AdminLayout({
 }>) {
   return (
     <>
+      <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
       <div className="flex flex-col">
         <div className="border-b container mx-auto">
           <div className="flex items-center h-16 px-4">
