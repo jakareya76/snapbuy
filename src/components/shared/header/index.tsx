@@ -4,6 +4,7 @@ import Link from "next/link";
 import Menu from "./menu";
 import { APP_NAME } from "@/lib/constants";
 import CategoryDrawer from "./category-drawer";
+import Search from "./search";
 
 const Header = () => {
   return (
@@ -23,6 +24,9 @@ const Header = () => {
               Snap<span className="text-amber-500 font-mono">Buy</span>
             </span>
           </Link>
+        </div>
+        <div className="hidden md:block">
+          <Search />
         </div>
 
         <Menu />
