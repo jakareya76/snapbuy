@@ -6,8 +6,9 @@ import {
   getFeaturedProducts,
 } from "@/lib/actions/product.actions";
 import { LATEST_PRODUCTS_LIMIT } from "@/lib/constants";
+import { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Home",
 };
 
