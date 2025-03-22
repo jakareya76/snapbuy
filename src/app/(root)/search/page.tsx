@@ -6,6 +6,7 @@ import {
 } from "@/lib/actions/product.actions";
 import { Metadata } from "next";
 import Link from "next/link";
+import SortOptions from "./sort-options";
 
 export const metadata: Metadata = {
   title: "Products",
@@ -221,40 +222,160 @@ const SearchPage = async ({
       <div className="space-y-4 md:col-span-4">
         {/* filter area */}
         <div className="flex-between flex-col my-4 md:flex-row">
-          <div className="flex items-center gap-2">
-            <p>{q !== "all" && q !== "" && "Query: " + q}</p>
-            <p>
-              {category !== "all" && category !== "" && "Category: " + category}
-            </p>
-            <p>{price !== "all" && "Price: " + price}</p>
-            <p>{rating !== "all" && "Rating: " + rating + " stars & up"}</p>
+          <div className="flex flex-wrap items-center gap-2 py-3">
+            {/* Active Filters Badge Section */}
+            {q !== "all" && q !== "" && (
+              <div className="flex items-center bg-gray-100 rounded-full px-3 py-1 text-sm text-gray-700">
+                <span className="font-medium mr-1">Search:</span>
+                <span>{q}</span>
+                <Link
+                  href={getFilterUrl({ q: "all" })}
+                  className="ml-2 text-gray-500 hover:text-gray-700"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </Link>
+              </div>
+            )}
 
-            <p>
-              &nbsp;{" "}
-              {(q !== "all" && q !== "") ||
+            {category !== "all" && category !== "" && (
+              <div className="flex items-center bg-gray-100 rounded-full px-3 py-1 text-sm text-gray-700">
+                <span className="font-medium mr-1">Category:</span>
+                <span>{category}</span>
+                <Link
+                  href={getFilterUrl({ c: "all" })}
+                  className="ml-2 text-gray-500 hover:text-gray-700"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </Link>
+              </div>
+            )}
+
+            {price !== "all" && (
+              <div className="flex items-center bg-gray-100 rounded-full px-3 py-1 text-sm text-gray-700">
+                <span className="font-medium mr-1">Price:</span>
+                <span>{price}</span>
+                <Link
+                  href={getFilterUrl({ p: "all" })}
+                  className="ml-2 text-gray-500 hover:text-gray-700"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </Link>
+              </div>
+            )}
+
+            {rating !== "all" && (
+              <div className="flex items-center bg-gray-100 rounded-full px-3 py-1 text-sm text-gray-700">
+                <span className="font-medium mr-1">Rating:</span>
+                <span className="flex items-center">
+                  {Array.from({ length: parseInt(rating) }).map((_, i) => (
+                    <svg
+                      key={i}
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 text-yellow-400"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                  <span className="ml-1">& up</span>
+                </span>
+                <Link
+                  href={getFilterUrl({ r: "all" })}
+                  className="ml-2 text-gray-500 hover:text-gray-700"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </Link>
+              </div>
+            )}
+
+            {/* Clear All Button */}
+            {((q !== "all" && q !== "") ||
               (category !== "all" && category !== "") ||
               rating !== "all" ||
-              price !== "all" ? (
-                <Button variant="outline" asChild>
-                  <Link href="/search">Clear</Link>
-                </Button>
-              ) : null}
-            </p>
+              price !== "all") && (
+              <Link
+                href="/search"
+                className="ml-1 text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline flex items-center"
+              >
+                Clear All
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 ml-1"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+              </Link>
+            )}
           </div>
+
           <div>
             {/* sort */}
-            Sort By{" "}
-            {sortOptions.map((s) => (
-              <Link
-                key={s}
-                className={`mx-2 hover:text-blue-600 transition-colors ${
-                  sort === s ? "font-semibold text-blue-600" : "text-gray-700"
-                }`}
-                href={getFilterUrl({ s })}
-              >
-                {s}
-              </Link>
-            ))}
+            <SortOptions
+              sort={sort}
+              sortOptions={sortOptions}
+              getFilterUrl={getFilterUrl}
+            />
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
