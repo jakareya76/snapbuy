@@ -34,3 +34,9 @@ export const productDefaultValues = {
 };
 
 export const USER_ROLES = ["user", "admin"];
+
+export const reviewFormDefaultValues = {
+  title: "",
+  comment: "",
+  rating: 0,
+};
