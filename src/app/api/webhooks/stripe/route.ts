@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import { updateOrderToPaid } from "@/lib/actions/order.action";
 
 // Initialize Stripe with the secret API key from environment variables
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+const stripe = new Stripe(process.env.STRIPE_Secret_key as string);
 
 // Define the POST handler function for the Stripe webhook
 export async function POST(req: NextRequest) {
