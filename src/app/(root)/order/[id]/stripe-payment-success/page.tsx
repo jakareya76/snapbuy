@@ -4,7 +4,8 @@ import { notFound, redirect } from "next/navigation";
 import Stripe from "stripe";
 import { getOrderById } from "@/lib/actions/order.action";
 import { Button } from "@/components/ui/button";
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+const stripe = new Stripe(process.env.STRIPE_Secret_key as string);
+
 export const metadata: Metadata = {
   title: "Stripe Payment Success",
 };
