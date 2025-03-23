@@ -1,5 +1,5 @@
 import ProductCard from "@/components/shared/product/product-card";
-import { Button } from "@/components/ui/button";
+
 import {
   getAllProducts,
   getAllCategories,
@@ -224,31 +224,6 @@ const SearchPage = async ({
         <div className="flex-between flex-col my-4 md:flex-row">
           <div className="flex flex-wrap items-center gap-2 py-3">
             {/* Active Filters Badge Section */}
-            {q !== "all" && q !== "" && (
-              <div className="flex items-center bg-gray-100 rounded-full px-3 py-1 text-sm text-gray-700">
-                <span className="font-medium mr-1">Search:</span>
-                <span>{q}</span>
-                <Link
-                  href={getFilterUrl({ q: "all" })}
-                  className="ml-2 text-gray-500 hover:text-gray-700"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </Link>
-              </div>
-            )}
 
             {category !== "all" && category !== "" && (
               <div className="flex items-center bg-gray-100 rounded-full px-3 py-1 text-sm text-gray-700">
